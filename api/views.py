@@ -3,9 +3,10 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-from rest_framework.pagination import PageNumberPagination
 
-from .models import Article
+
+
+from .models import Article 
 from .serializers import ArticleSerializer 
 import os
 
@@ -14,6 +15,7 @@ class ArticleView(APIView):
         try:
             articles = Article.objects.all()
             serializer = ArticleSerializer(articles, many=True)
+           
            
 
             return Response({
