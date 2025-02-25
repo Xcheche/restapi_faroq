@@ -3,8 +3,7 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.response import Response
 from rest_framework.views import APIView
-
-
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Article
 from .serializers import ArticleSerializer 
@@ -15,6 +14,7 @@ class ArticleView(APIView):
         try:
             articles = Article.objects.all()
             serializer = ArticleSerializer(articles, many=True)
+           
 
             return Response({
                 'data': serializer.data,
@@ -109,4 +109,30 @@ class ArticleView(APIView):
             return Response({
                 'data': {},
                 'message': "Something went wrong while deleting the article"
+            }, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ArticleDetailView(APIView):
+    def get(self, request, id):  # GET
+        try:
+            article = Article.objects.filter(id=id).first()
+
+            if not article:
+                return Response({
+                    'data': {},
+                    'message': "Article not found with this ID"
+                }, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = ArticleSerializer(article)
+
+            return Response({
+                'data': serializer.data,
+                'message': "Article data fetched successfully"
+            }, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            print(e)
+            return Response({
+                'data': {},
+                'message': "Something went wrong while fetching the article data"
             }, status=status.HTTP_400_BAD_REQUEST)
